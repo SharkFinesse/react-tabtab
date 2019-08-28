@@ -1,6 +1,6 @@
 // @flow
-import * as React from "react";
-import Panel from "./Panel";
+import * as React from 'react'
+import Panel from './Panel';
 
 type Props = {
   loadContent: (cb: Function) => void,
@@ -17,10 +17,7 @@ type State = {
   data: any
 };
 
-export default class AsyncPanelComponent extends React.PureComponent<
-  Props,
-  State
-> {
+export default class AsyncPanelComponent extends React.PureComponent<Props, State> {
   static defaultProps = {
     cache: true
   };
@@ -38,15 +35,17 @@ export default class AsyncPanelComponent extends React.PureComponent<
   }
 
   componentDidMount() {
-    if (this.props.active) this.loadPanel();
+    if (this.props.active)
+      this.loadPanel();
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.active) this.loadPanel();
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.active)
+      this.loadPanel();
   }
 
   loadPanel() {
-    const { loadContent, cache } = this.props;
+    const {loadContent, cache} = this.props;
     if (cache && this.cacheData) {
       this.setState({
         isLoading: false,
@@ -56,7 +55,7 @@ export default class AsyncPanelComponent extends React.PureComponent<
     }
     const callback = (err, data) => {
       if (err) {
-        console.log("React-Tabtab async panel error:", err);
+        console.log('React-Tabtab async panel error:', err);
       }
       if (cache) {
         this.cacheData = data;
@@ -65,31 +64,32 @@ export default class AsyncPanelComponent extends React.PureComponent<
         isLoading: false,
         data
       });
-    };
+    }
     const promise = loadContent(callback);
     if (promise) {
-      promise.then(data => callback(null, data), err => callback(err));
+      promise.then(
+        (data) => callback(null, data),
+        (err) => callback(err)
+      );
     }
     if (!this.state.isLoading) {
-      this.setState({ isLoading: true });
+      this.setState({isLoading: true});
     }
   }
 
   render() {
-    const {
-      render,
-      renderLoading,
-      CustomPanelStyle,
-      active,
-      index
-    } = this.props;
-    const { isLoading, data } = this.state;
+    const {render, renderLoading, CustomPanelStyle, active, index} = this.props;
+    const {isLoading, data} = this.state;
     let content;
     if (isLoading) {
       content = renderLoading();
     } else {
       content = render(data);
     }
-    return <Panel {...{ CustomPanelStyle, active, index }}>{content}</Panel>;
+    return (
+      <Panel {...{CustomPanelStyle, active, index}}>
+        {content}
+      </Panel>
+    )
   }
 }
